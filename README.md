@@ -10,31 +10,16 @@
 
 ---
 
-## 📥 Downloads (Choose Your Edition)
+## 📥 Downloads
 
-FilePeek is available in two editions: a native **Windows Desktop Application (`.exe`)** and a **Standalone Offline Web Application (`.html` / `.zip`)**.
+Choose between the native **Windows Desktop Application** or the **Standalone Web Application**:
 
 | Edition | File | Type | Description |
 |---|---|---|---|
-| 🪟 **Desktop (Portable)** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~110 MB) | **Recommended.** Standalone portable binary. No setup required—double click to run instantly. |
-| 📦 **Desktop (Installer)** | [**`FilePeek-Setup-1.0.0.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Setup-1.0.0.exe) | `.exe` (~121 MB) | Standard Windows setup wizard with Desktop and Start Menu shortcuts. |
-| 🌐 **Web App (Zip)** | [**`FilePeek-Web-v1.0.zip`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web-v1.0.zip) | `.zip` (~14 KB) | Portable web package. Unzip and run `run.bat` or open `index.html` in any browser. |
-| 📄 **Web App (Single File)** | [**`FilePeek-Web.html`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web.html) | `.html` (~37 KB) | Single-file, self-contained HTML file. Save to disk and double-click to launch offline. |
+| 🪟 **Desktop Application** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~105 MB) | Standalone portable Windows executable. No installation required—double-click to run immediately. |
+| 🌐 **Web Application** | [**`FilePeek-Web.zip`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web.zip) | `.zip` (~14 KB) | Standalone offline web application. Unzip and run `run.bat` or open `index.html` in any browser. |
 
 > 🔒 **All releases are available on GitHub Releases:** [**View Release v1.0**](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
-
----
-
-### 🛡️ Release Verification (SHA-256 Checksums)
-
-Verify the integrity of downloaded binaries using PowerShell (`Get-FileHash <filename> -Algorithm SHA256`):
-
-| File | SHA-256 Hash |
-|---|---|
-| `FilePeek.exe` | `963b21c010a65d385cdbd09d3ac618104d083bb7641b9f1bf35fcf7c7e5262f3` |
-| `FilePeek-Setup-1.0.0.exe` | `1a5532d80766d94c60ea91695b36435c525dfb4cce7ce65e2f0a57a1ae5a2d5f` |
-| `FilePeek-Web-v1.0.zip` | `ee44c03d5c7c915997b3da6ce2eab8a0f210705d4a2c79129a89b9376219eae5` |
-| `FilePeek-Web.html` | `91a1583a39cadb2c8989687a0c8c121730f516ec358642024ba572158d086e84` |
 
 ---
 
@@ -89,8 +74,6 @@ filepeek/
 ├── resources/                # Branding assets & icons
 │   ├── icon.ico              # Windows icon
 │   └── filepeek-logo.png     # 1024x1024 vector-rendered logo
-├── scripts/                  # Build and deployment utilities
-│   └── setup-app.js          # Synchronizer script
 ├── package.json              # Project configuration and build targets
 ├── LICENSE                   # Apache License 2.0
 └── README.md                 # Project documentation
@@ -130,9 +113,6 @@ npm run package:portable
 
 # Build NSIS setup installer (.exe)
 npm run package
-
-# Build both editions at once
-npm run dist
 ```
 Compiled binaries are output to the `release/` directory.
 
