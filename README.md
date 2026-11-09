@@ -1,12 +1,20 @@
-# FilePeek 🔍
+<p align="center">
+  <img src="resources/filepeek-logo.png" width="96" height="96" alt="FilePeek Logo" />
+</p>
 
-> **Know Everything About Your Files.**  
-> A privacy-focused, offline file inspector and technical metadata utility available as both a native Windows desktop application and a standalone web application.
+<h1 align="center">FilePeek</h1>
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/Release-v1.0-8B7CFF.svg)](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20x64%20%7C%20Web%20SPA-informational.svg)](#)
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline-success.svg)](#)
+<p align="center">
+  <strong>Know Everything About Your Files.</strong><br>
+  A privacy-focused, offline-first file inspection and technical metadata utility available as both a native Windows desktop application and a standalone web application.
+</p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License" /></a>
+  <a href="https://github.com/patilomkar7570/filepeek/releases/tag/v1.0"><img src="https://img.shields.io/badge/Release-v1.0-8B7CFF.svg" alt="Release" /></a>
+  <img src="https://img.shields.io/badge/Platform-Windows%20x64%20%7C%20Web%20SPA-informational.svg" alt="Platform" />
+  <img src="https://img.shields.io/badge/Privacy-100%25%20Offline-success.svg" alt="Privacy" />
+</p>
 
 ---
 
@@ -19,7 +27,7 @@ Choose between the native **Windows Desktop Application** or the **Standalone We
 | 🪟 **Desktop Application** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~105 MB) | Standalone portable Windows executable. No installation required—double-click to run immediately. |
 | 🌐 **Web Application** | [**`FilePeek-Web.zip`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web.zip) | `.zip` (~14 KB) | Standalone offline web application. Unzip and run `run.bat` or open `index.html` in any browser. |
 
-> 🔒 **All releases are available on GitHub Releases:** [**View Release v1.0**](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
+> 🔒 **Direct Release Page:** [**View Release v1.0 on GitHub**](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
 
 ---
 

@@ -333,7 +333,18 @@
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
       if (state.theme === 'system') {
-        setTheme('system');
+        // Global drag-and-drop across entire window
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        inspectFileObject(e.dataTransfer.files[0]);
+      }
+    });
+
+    setTheme('system');
       }
     });
 
@@ -363,12 +374,17 @@
         previewUrl = URL.createObjectURL(file);
       }
 
-      const fullBuffer = await file.arrayBuffer();
-      const hashBuf = await crypto.subtle.digest('SHA-256', fullBuffer);
-      const sha256Hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-
-      // MD5 calculation
-      const md5Hex = computeMd5(new Uint8Array(fullBuffer.slice(0, 1048576)));
+      let sha256Hex = '';
+      let md5Hex = '';
+      try {
+        const fullBuffer = await file.arrayBuffer();
+        const hashBuf = await crypto.subtle.digest('SHA-256', fullBuffer);
+        sha256Hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        md5Hex = computeMd5(new Uint8Array(fullBuffer.slice(0, 1048576)));
+      } catch (err) {
+        sha256Hex = 'Calculation skipped (file exceeds memory limits)';
+        md5Hex = 'Calculation skipped';
+      }
 
       state.activeInspection = {
         name: file.name,
