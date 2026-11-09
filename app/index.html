@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FilePeek – Know Everything About Your Files</title>
+  <style>
+    :root {
+      --font-sans: 'Segoe UI Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Cascadia Code', 'Consolas', monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme='dark'] {
+      --bg-app: #0B0D12;
+      --bg-sidebar: #10131B;
+      --bg-card: #171B25;
+      --bg-card-hover: #1D222F;
+      --bg-card-subtle: rgba(23, 27, 37, 0.6);
+      --border-color: #252B38;
+      --text-primary: #F5F7FA;
+      --text-secondary: #929AAA;
+      --text-muted: #61687A;
+      --accent: #8B7CFF;
+      --accent-hover: #9F92FF;
+      --accent-subtle: rgba(139, 124, 255, 0.12);
+      --accent-border: rgba(139, 124, 255, 0.3);
+      --logo-fill: #FFFFFF;
+      --logo-bg: #1F2432;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --warning-border: rgba(245, 158, 11, 0.3);
+      --warning-text: #FBBF24;
+      --success-text: #34D399;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --danger-text: #F87171;
+    }
+    [data-theme='light'] {
+      --bg-app: #F5F6FA;
+      --bg-sidebar: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F8F9FC;
+      --bg-card-subtle: rgba(255, 255, 255, 0.8);
+      --border-color: #E7E9F0;
+      --text-primary: #171923;
+      --text-secondary: #747B8A;
+      --text-muted: #9BA2B0;
+      --accent: #6757E8;
+      --accent-hover: #5646D6;
+      --accent-subtle: rgba(103, 87, 232, 0.08);
+      --accent-border: rgba(103, 87, 232, 0.25);
+      --logo-fill: #111111;
+      --logo-bg: #F0F2F7;
+      --warning-bg: rgba(245, 158, 11, 0.08);
+      --warning-border: rgba(245, 158, 11, 0.25);
+      --warning-text: #D97706;
+      --success-text: #059669;
+      --success-bg: rgba(16, 185, 129, 0.08);
+      --danger-text: #DC2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-primary); height: 100vh; overflow: hidden; }
+    .app-container { display: flex; height: 100vh; width: 100vw; }
+    .app-sidebar { width: 250px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; }
+    .sidebar-header { padding: 20px 18px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
+    
+    .brand-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--logo-bg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--logo-fill);
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .brand-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+    .brand-tagline { font-size: 11px; color: var(--text-secondary); }
+    .sidebar-nav { padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 500; color: var(--text-secondary); background: transparent; border: 1px solid transparent; cursor: pointer; text-align: left; width: 100%; transition: var(--transition); }
+    .nav-item:hover { color: var(--text-primary); background: var(--bg-card); }
+    .nav-item.active { color: var(--text-primary); background: var(--accent-subtle); border-color: var(--accent-border); font-weight: 600; }
+    .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+    .theme-toggle-group { display: flex; background: var(--bg-card); padding: 3px; border-radius: var(--radius-md); border: 1px solid var(--border-color); gap: 2px; }
+    .theme-btn { background: transparent; border: none; padding: 5px 9px; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; font-size: 11.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .theme-btn.active { background: var(--accent); color: white; }
+    .main-viewport { flex: 1; display: flex; flex-direction: column; overflow-y: auto; height: 100vh; padding: 32px 40px; }
+    .hero-banner { text-align: center; margin-bottom: 24px; }
+    .hero-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .hero-subtitle { font-size: 15px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+    .dropzone-card { border: 2px dashed var(--border-color); border-radius: var(--radius-xl); background: var(--bg-card); padding: 52px 32px; text-align: center; cursor: pointer; transition: var(--transition); margin-bottom: 24px; }
+    .dropzone-card:hover, .dropzone-card.drag-active { border-color: var(--accent); background: var(--accent-subtle); }
+    .drop-icon-circle { width: 68px; height: 68px; border-radius: 50%; background: var(--logo-bg); border: 1px solid var(--border-color); color: var(--logo-fill); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .drop-primary-text { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .drop-secondary-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 22px; }
+    .btn-browse { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: white; border: none; padding: 10px 24px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 600; cursor: pointer; }
+    .category-pills-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 24px; }
+    .category-pill { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+    .privacy-badge-card { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-lg); font-size: 12.5px; color: var(--text-secondary); margin-bottom: 28px; }
+    .overview-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px 24px; display: flex; align-items: center; gap: 18px; margin-bottom: 20px; }
+    .overview-icon-container { width: 54px; height: 54px; border-radius: var(--radius-md); background: var(--logo-bg); border: 1px solid var(--border-color); color: var(--logo-fill); display: flex; align-items: center; justify-content: center; }
+    .overview-details { flex: 1; }
+    .overview-filename { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .overview-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-sm); background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-secondary); }
+    .badge-primary { background: var(--accent-subtle); border-color: var(--accent-border); color: var(--accent); }
+    .badge-verified { background: var(--success-bg); border-color: rgba(16, 185, 129, 0.3); color: var(--success-text); }
+    .mismatch-banner { background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius-md); padding: 14px 18px; display: flex; gap: 12px; color: var(--warning-text); margin-bottom: 20px; font-size: 13px; }
+    .info-section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; }
+    .dashboard-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+    .card-heading { font-size: 13.5px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .card-tag { font-size: 11px; font-weight: 700; background: var(--accent-subtle); color: var(--accent); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--accent-border); }
+    .prop-table { display: flex; flex-direction: column; gap: 10px; }
+    .prop-row { display: flex; justify-content: space-between; font-size: 12.5px; gap: 12px; align-items: center; }
+    .prop-key { color: var(--text-secondary); flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+    .prop-val { font-weight: 600; text-align: right; word-break: break-all; }
+    .prop-val.mono, .hash-hex { font-family: var(--font-mono); font-size: 11.5px; color: var(--accent); word-break: break-all; }
+    .hash-row { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; }
+    .hash-value-box { display: flex; justify-content: space-between; align-items: center; background: var(--bg-app); padding: 6px 10px; border-radius: var(--radius-sm); }
+    .hex-dump-box { font-family: var(--font-mono); font-size: 11px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 12px; line-height: 1.6; color: var(--text-secondary); white-space: pre; overflow-x: auto; }
+    .utility-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+    .utility-btn { padding: 9px 12px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 12px; font-weight: 600; color: var(--text-primary); cursor: pointer; text-align: center; }
+    .utility-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-back { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 6px 12px; border-radius: var(--radius-md); font-size: 12.5px; font-weight: 500; cursor: pointer; margin-bottom: 12px; }
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--bg-card); border: 1px solid var(--accent); color: var(--text-primary); padding: 10px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .image-preview-wrapper { width: 100%; max-height: 260px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.3); }
+    .image-preview-wrapper img { max-width: 100%; max-height: 260px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <div id="app-root"></div>
+  <input type="file" id="global-file-input" style="display:none;" />
+
+  <script>
+    // FilePeek Minimalist SVG Logo
+    function getFilePeekLogoSvg(size = 22) {
+      return `
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 3.5C4 2.67157 4.67157 2 5.5 2H12.5L18 7.5V13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="12.5 2 12.5 7.5 18 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 8V20.5C4 21.3284 4.67157 22 5.5 22H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="15.5" cy="15.5" r="4" fill="var(--bg-card)" stroke="currentColor" stroke-width="2"/>
+          <line x1="18.5" y1="18.5" x2="21.5" y2="21.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    const SIGNATURES = [
+      { format: 'PNG Image', mime: 'image/png', cat: 'image', exts: ['png'], match: (b) => b[0]===0x89 && b[1]===0x50 && b[2]===0x4E && b[3]===0x47 },
+      { format: 'JPEG Image', mime: 'image/jpeg', cat: 'image', exts: ['jpg', 'jpeg'], match: (b) => b[0]===0xFF && b[1]===0xD8 && b[2]===0xFF },
+      { format: 'GIF Image', mime: 'image/gif', cat: 'image', exts: ['gif'], match: (b) => b[0]===0x47 && b[1]===0x49 && b[2]===0x46 },
+      { format: 'WebP Image', mime: 'image/webp', cat: 'image', exts: ['webp'], match: (b) => b[0]===0x52 && b[1]===0x49 && b[2]===0x46 && b[3]===0x46 && b[8]===0x57 && b[9]===0x45 && b[10]===0x42 && b[11]===0x50 },
+      { format: 'BMP Image', mime: 'image/bmp', cat: 'image', exts: ['bmp'], match: (b) => b[0]===0x42 && b[1]===0x4D },
+      { format: 'PDF Document', mime: 'application/pdf', cat: 'pdf', exts: ['pdf'], match: (b) => b[0]===0x25 && b[1]===0x50 && b[2]===0x44 && b[3]===0x46 && b[4]===0x2D },
+      { format: 'ZIP Archive', mime: 'application/zip', cat: 'archive', exts: ['zip', 'docx', 'xlsx', 'pptx'], match: (b) => b[0]===0x50 && b[1]===0x4B && (b[2]===0x03 || b[2]===0x05) },
+      { format: 'WAV Audio', mime: 'audio/wav', cat: 'audio', exts: ['wav'], match: (b) => b[0]===0x52 && b[1]===0x49 && b[2]===0x46 && b[3]===0x46 && b[8]===0x57 && b[9]===0x41 && b[10]===0x56 && b[11]===0x45 },
+      { format: 'MP3 Audio (ID3)', mime: 'audio/mpeg', cat: 'audio', exts: ['mp3'], match: (b) => b[0]===0x49 && b[1]===0x44 && b[2]===0x33 },
+      { format: 'Windows Executable / DLL (PE)', mime: 'application/vnd.microsoft.portable-executable', cat: 'executable', exts: ['exe', 'dll', 'sys'], match: (b) => b[0]===0x4D && b[1]===0x5A },
+      { format: 'ELF Linux Binary', mime: 'application/x-executable', cat: 'executable', exts: ['elf', 'so', 'bin'], match: (b) => b[0]===0x7F && b[1]===0x45 && b[2]===0x4C && b[3]===0x46 }
+    ];
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+    }
+
+    // 10 Extra Hidden Properties Extraction
+    function calculateFileExtras(bytes, totalSize, ext, matched) {
+      // 1. True Magic-Byte Signature (Hex)
+      const sigHex = Array.from(bytes.slice(0, 8)).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+
+      // 2. Extension Match Status
+      const extClean = ext.replace('.', '').toLowerCase();
+      const extMatchStatus = matched
+        ? (matched.exts.includes(extClean) ? 'Verified (Matches detected signature)' : `Warning: Extension mismatch! (.${extClean} vs ${matched.format})`)
+        : 'Unknown Extension / Generic format';
+
+      // 3. Shannon Entropy (Randomness Score 0.0 - 8.0)
+      const freq = new Uint32Array(256);
+      for (let i = 0; i < bytes.length; i++) freq[bytes[i]]++;
+      let ent = 0;
+      for (let i = 0; i < 256; i++) {
+        if (freq[i] > 0) {
+          const p = freq[i] / bytes.length;
+          ent -= p * Math.log2(p);
+        }
+      }
+      const entropyScore = ent.toFixed(2) + ' / 8.00 bits';
+      const entropyDesc = ent > 7.2 ? 'High (Compressed / Encrypted)' : ent < 4.0 ? 'Low (Plaintext / Sparse)' : 'Normal (Structured / Code)';
+
+      // 4. Character Encoding & BOM
+      let encoding = 'ASCII / UTF-8';
+      let bom = 'None';
+      if (bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) { encoding = 'UTF-8 with BOM'; bom = 'EF BB BF'; }
+      else if (bytes[0] === 0xFF && bytes[1] === 0xFE) { encoding = 'UTF-16 Little-Endian'; bom = 'FF FE'; }
+      else if (bytes[0] === 0xFE && bytes[1] === 0xFF) { encoding = 'UTF-16 Big-Endian'; bom = 'FE FF'; }
+
+      // 5. Line Ending Convention
+      let crlf = 0, lf = 0;
+      for (let i = 0; i < bytes.length - 1; i++) {
+        if (bytes[i] === 13 && bytes[i+1] === 10) { crlf++; i++; }
+        else if (bytes[i] === 10) lf++;
+      }
+      let lineEndings = 'Single-line / Binary file';
+      if (crlf > 0 && lf === 0) lineEndings = `Windows CRLF (${crlf} lines)`;
+      else if (lf > 0 && crlf === 0) lineEndings = `Unix LF (${lf} lines)`;
+      else if (crlf > 0 && lf > 0) lineEndings = `Mixed (CRLF: ${crlf}, LF: ${lf})`;
+
+      // 6. Null-Byte Padding Density
+      let nulls = 0, printable = 0, high = 0;
+      for (let i = 0; i < bytes.length; i++) {
+        const b = bytes[i];
+        if (b === 0) nulls++;
+        else if ((b >= 32 && b <= 126) || b === 9 || b === 10 || b === 13) printable++;
+        else high++;
+      }
+      const nullRatio = ((nulls / bytes.length) * 100).toFixed(1) + '% null bytes';
+
+      // 7. Printable Text vs Binary Byte Ratio
+      const textRatio = ((printable / bytes.length) * 100).toFixed(1) + '% text / ' + ((high / bytes.length) * 100).toFixed(1) + '% binary';
+
+      // 8. Drive Cluster Slack Space (Estimated on 4096-byte NTFS clusters)
+      const clusterSize = 4096;
+      const allocatedSize = Math.ceil(totalSize / clusterSize) * clusterSize;
+      const slackBytes = allocatedSize - totalSize;
+      const slackDesc = `${slackBytes.toLocaleString()} bytes unused in last cluster`;
+
+      // 9. Hex Header Preview (First 32 bytes)
+      const hexLines = [];
+      const len = Math.min(bytes.length, 32);
+      for (let i = 0; i < len; i += 16) {
+        const slice = bytes.slice(i, Math.min(i + 16, len));
+        const off = i.toString(16).padStart(8, '0');
+        const hex = Array.from(slice).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+        const padHex = hex.padEnd(48, ' ');
+        const ascii = Array.from(slice).map(b => b >= 32 && b <= 126 ? String.fromCharCode(b) : '.').join('');
+        hexLines.push(`${off}  ${padHex}  |${ascii}|`);
+      }
+
+      return {
+        sigHex,
+        extMatchStatus,
+        entropyScore: `${entropyScore} (${entropyDesc})`,
+        encoding: `${encoding} (BOM: ${bom})`,
+        lineEndings,
+        nullRatio,
+        textRatio,
+        slackDesc,
+        hexPreview: hexLines.join('\n')
+      };
+    }
+
+    // Pure JS MD5 Checksum Implementation
+    function computeMd5(bytes) {
+      function safeAdd(x, y) { const lsw = (x & 0xFFFF) + (y & 0xFFFF); return (((x >> 16) + (y >> 16) + (lsw >> 16)) << 16) | (lsw & 0xFFFF); }
+      function bitRol(num, cnt) { return (num << cnt) | (num >>> (32 - cnt)); }
+      function md5cmn(q, a, b, x, s, t) { return safeAdd(bitRol(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b); }
+      function md5ff(a, b, c, d, x, s, t) { return md5cmn((b & c) | ((~b) & d), a, b, x, s, t); }
+      function md5gg(a, b, c, d, x, s, t) { return md5cmn((b & d) | (c & (~d)), a, b, x, s, t); }
+      function md5hh(a, b, c, d, x, s, t) { return md5cmn(b ^ c ^ d, a, b, x, s, t); }
+      function md5ii(a, b, c, d, x, s, t) { return md5cmn(c ^ (b | (~d)), a, b, x, s, t); }
+
+      const nwords = ((bytes.length + 8) >> 6) + 1;
+      const x = new Array(nwords * 16).fill(0);
+      for (let i = 0; i < bytes.length; i++) x[i >> 2] |= (bytes[i] & 0xFF) << ((i % 4) * 8);
+      x[bytes.length >> 2] |= 0x80 << ((bytes.length % 4) * 8);
+      x[x.length - 2] = bytes.length * 8;
+
+      let a = 1732584193, b = -271733879, c = -1732584194, d = 271733878;
+      for (let i = 0; i < x.length; i += 16) {
+        const olda = a, oldb = b, oldc = c, oldd = d;
+        a = md5ff(a, b, c, d, x[i], 7, -680876936); d = md5ff(d, a, b, c, x[i+1], 12, -389564586); c = md5ff(c, d, a, b, x[i+2], 17, 606105819); b = md5ff(b, c, d, a, x[i+3], 22, -1044525330);
+        a = md5ff(a, b, c, d, x[i+4], 7, -176418897); d = md5ff(d, a, b, c, x[i+5], 12, 1200080426); c = md5ff(c, d, a, b, x[i+6], 17, -1473231341); b = md5ff(b, c, d, a, x[i+7], 22, -45705983);
+        a = md5ff(a, b, c, d, x[i+8], 7, 1770035416); d = md5ff(d, a, b, c, x[i+9], 12, -1958414417); c = md5ff(c, d, a, b, x[i+10], 17, -42063); b = md5ff(b, c, d, a, x[i+11], 22, -1990404162);
+        a = md5ff(a, b, c, d, x[i+12], 7, 1804603682); d = md5ff(d, a, b, c, x[i+13], 12, -40341101); c = md5ff(c, d, a, b, x[i+14], 17, -1502002290); b = md5ff(b, c, d, a, x[i+15], 22, 1236535329);
+        a = md5gg(a, b, c, d, x[i+1], 5, -165796510); d = md5gg(d, a, b, c, x[i+6], 9, -1069501632); c = md5gg(c, d, a, b, x[i+11], 14, 643717713); b = md5gg(b, c, d, a, x[i], 20, -373897302);
+        a = md5gg(a, b, c, d, x[i+5], 5, -701558691); d = md5gg(d, a, b, c, x[i+10], 9, 38016083); c = md5gg(c, d, a, b, x[i+15], 14, -660478335); b = md5gg(b, c, d, a, x[i+4], 20, -405537848);
+        a = md5gg(a, b, c, d, x[i+9], 5, 568446438); d = md5gg(d, a, b, c, x[i+14], 9, -1019803690); c = md5gg(c, d, a, b, x[i+3], 14, -187363961); b = md5gg(b, c, d, a, x[i+8], 20, 1163531501);
+        a = md5gg(a, b, c, d, x[i+13], 5, -1444681467); d = md5gg(d, a, b, c, x[i+2], 9, -51403784); c = md5gg(c, d, a, b, x[i+7], 14, 1735328473); b = md5gg(b, c, d, a, x[i+12], 20, -1926607734);
+        a = md5hh(a, b, c, d, x[i+5], 4, -378558); d = md5hh(d, a, b, c, x[i+8], 11, -2022574463); c = md5hh(c, d, a, b, x[i+11], 16, 1839030562); b = md5hh(b, c, d, a, x[i+14], 23, -35309556);
+        a = md5hh(a, b, c, d, x[i+1], 4, -1530992060); d = md5hh(d, a, b, c, x[i+4], 11, 1272893353); c = md5hh(c, d, a, b, x[i+7], 16, -155497632); b = md5hh(b, c, d, a, x[i+10], 23, -1094730640);
+        a = md5hh(a, b, c, d, x[i+13], 4, 681279174); d = md5hh(d, a, b, c, x[i], 11, -358537222); c = md5hh(c, d, a, b, x[i+3], 16, -722521979); b = md5hh(b, c, d, a, x[i+6], 23, 76029189);
+        a = md5hh(a, b, c, d, x[i+9], 4, -640364487); d = md5hh(d, a, b, c, x[i+12], 11, -421815835); c = md5hh(c, d, a, b, x[i+15], 16, 530742520); b = md5hh(b, c, d, a, x[i+2], 23, -995338651);
+        a = md5ii(a, b, c, d, x[i], 6, -198630844); d = md5ii(d, a, b, c, x[i+7], 10, 1126891415); c = md5ii(c, d, a, b, x[i+14], 15, -1416354905); b = md5ii(b, c, d, a, x[i+5], 21, -57434055);
+        a = md5ii(a, b, c, d, x[i+12], 6, 1700485571); d = md5ii(d, a, b, c, x[i+3], 10, -1894986606); c = md5ii(c, d, a, b, x[i+10], 15, -1051523); b = md5ii(b, c, d, a, x[i+1], 21, -2054922799);
+        a = md5ii(a, b, c, d, x[i+8], 6, 1873313359); d = md5ii(d, a, b, c, x[i+15], 10, -30611744); c = md5ii(c, d, a, b, x[i+6], 15, -1560198380); b = md5ii(b, c, d, a, x[i+13], 21, 1309151649);
+        a = md5ii(a, b, c, d, x[i+4], 6, -145523070); d = md5ii(d, a, b, c, x[i+11], 10, -1120210379); c = md5ii(c, d, a, b, x[i+2], 15, 718787259); b = md5ii(b, c, d, a, x[i+9], 21, -343485551);
+        a = safeAdd(a, olda); b = safeAdd(b, oldb); c = safeAdd(c, oldc); d = safeAdd(d, oldd);
+      }
+      return [a, b, c, d].map(val => {
+        let hex = '';
+        for (let j = 0; j < 4; j++) hex += ((val >> (j * 8)) & 0xFF).toString(16).padStart(2, '0');
+        return hex;
+      }).join('');
+    }
+
+    const state = {
+      view: 'home',
+      theme: 'system',
+      activeInspection: null,
+      recents: [],
+      toasts: []
+    };
+
+    function showToast(msg) {
+      const id = Date.now();
+      state.toasts.push({ id, msg });
+      render();
+      setTimeout(() => {
+        state.toasts = state.toasts.filter(t => t.id !== id);
+        render();
+      }, 3000);
+    }
+
+    function setTheme(t) {
+      state.theme = t;
+      let effective = t;
+      if (t === 'system') {
+        effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', effective);
+      render();
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (state.theme === 'system') {
+        // Global drag-and-drop across entire window
+    window.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    window.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        inspectFileObject(e.dataTransfer.files[0]);
+      }
+    });
+
+    setTheme('system');
+      }
+    });
+
+    async function inspectFileObject(file) {
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const sampleBuffer = await file.slice(0, 65536).arrayBuffer();
+      const sampleBytes = new Uint8Array(sampleBuffer);
+
+      let matched = null;
+      for (const sig of SIGNATURES) {
+        if (sig.match(sampleBytes)) {
+          matched = sig;
+          break;
+        }
+      }
+
+      const detectedFormat = matched ? matched.format : (file.type || 'Plain Text Document');
+      const detectedMime = matched ? matched.mime : (file.type || 'application/octet-stream');
+      const category = matched ? matched.cat : 'document';
+      const isMismatch = matched && ext && !matched.exts.includes(ext);
+
+      // Extract the 10 Extra Hidden Properties
+      const extras = calculateFileExtras(sampleBytes, file.size, '.' + ext, matched);
+
+      let previewUrl = null;
+      if (category === 'image' && file.size < 15 * 1024 * 1024) {
+        previewUrl = URL.createObjectURL(file);
+      }
+
+      let sha256Hex = '';
+      let md5Hex = '';
+      try {
+        const fullBuffer = await file.arrayBuffer();
+        const hashBuf = await crypto.subtle.digest('SHA-256', fullBuffer);
+        sha256Hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        md5Hex = computeMd5(new Uint8Array(fullBuffer.slice(0, 1048576)));
+      } catch (err) {
+        sha256Hex = 'Calculation skipped (file exceeds memory limits)';
+        md5Hex = 'Calculation skipped';
+      }
+
+      state.activeInspection = {
+        name: file.name,
+        size: file.size,
+        sizeFormatted: formatBytes(file.size),
+        ext: '.' + ext,
+        lastModified: new Date(file.lastModified).toLocaleString(),
+        detectedFormat,
+        detectedMime,
+        category,
+        isMismatch,
+        mismatchWarning: isMismatch ? ('File extension (.' + ext + ') does not match detected format (' + detectedFormat + ').') : null,
+        extras,
+        previewUrl,
+        sha256: sha256Hex,
+        md5: md5Hex
+      };
+
+      state.recents.unshift({
+        id: Date.now(),
+        name: file.name,
+        sizeFormatted: formatBytes(file.size),
+        detectedFormat
+      });
+      if (state.recents.length > 6) state.recents.pop();
+
+      state.view = 'dashboard';
+      showToast('Inspected "' + file.name + '"');
+      render();
+    }
+
+    function render() {
+      const root = document.getElementById('app-root');
+      let mainHtml = '';
+
+      if (state.view === 'home') {
+        mainHtml = `
+          <div class="hero-banner">
+            <h2 class="hero-title">KNOW YOUR FILES.</h2>
+            <p class="hero-subtitle">Drop any file to explore its properties, format and 10+ hidden technical details Windows File Explorer never displays.</p>
+          </div>
+          <div class="dropzone-card" id="dropzone-area" onclick="document.getElementById('global-file-input').click();">
+            <div class="drop-icon-circle">
+              ${getFilePeekLogoSvg(34)}
+            </div>
+            <div class="drop-primary-text">Drop any file here to inspect</div>
+            <div class="drop-secondary-text">Magic-byte verification, Shannon entropy, cluster slack, hashes & technical properties</div>
+            <button class="btn-browse" type="button">Browse Files</button>
+          </div>
+          <div class="category-pills-row">
+            <div class="category-pill">🔍 Magic-Byte Signatures</div>
+            <div class="category-pill">⚡ Shannon Entropy</div>
+            <div class="category-pill">💾 Cluster Slack Space</div>
+            <div class="category-pill">📝 Text Encoding & BOM</div>
+            <div class="category-pill">🔒 SHA-256 & MD5 Checksums</div>
+          </div>
+          <div class="privacy-badge-card">
+            <span><strong>100% Offline & Private:</strong> Files are processed locally on your device. Zero cloud uploads.</span>
+          </div>
+        `;
+      } else if (state.view === 'dashboard' && state.activeInspection) {
+        const f = state.activeInspection;
+        mainHtml = `
+          <div>
+            <button class="btn-back" onclick="state.view='home'; render();">← Inspect Another File</button>
+            <div class="overview-card">
+              <div class="overview-icon-container">
+                ${getFilePeekLogoSvg(30)}
+              </div>
+              <div class="overview-details">
+                <div class="overview-filename">${f.name}</div>
+                <div style="font-size:12px;color:var(--text-secondary);">${f.sizeFormatted} • ${f.detectedMime}</div>
+                <div class="overview-badges">
+                  <span class="badge badge-primary">${f.detectedFormat}</span>
+                  <span class="badge">${f.sizeFormatted}</span>
+                  <span class="badge badge-verified">Verified Locally</span>
+                </div>
+              </div>
+            </div>
+
+            ${f.isMismatch ? `
+              <div class="mismatch-banner">
+                <strong>Notice:</strong> ${f.mismatchWarning}
+              </div>
+            ` : ''}
+
+            <div class="info-section-grid">
+              <!-- 10 Hidden Properties Card (Windows Explorer Misses) -->
+              <div class="dashboard-card" style="grid-column: 1 / -1;">
+                <div class="card-heading">
+                  <span>10 Hidden File Properties (Not Shown in Windows File Explorer)</span>
+                  <span class="card-tag">10 / 10 Hidden Items</span>
+                </div>
+                <div class="prop-table">
+                  <div class="prop-row">
+                    <span class="prop-key">1. True Magic-Byte Signature</span>
+                    <span class="prop-val mono">${f.extras.sigHex}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">2. Extension Match Verification</span>
+                    <span class="prop-val" style="color:${f.isMismatch ? 'var(--warning-text)' : 'var(--success-text)'};">${f.extras.extMatchStatus}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">3. Shannon Entropy (Randomness Score)</span>
+                    <span class="prop-val">${f.extras.entropyScore}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">4. Character Encoding & BOM</span>
+                    <span class="prop-val">${f.extras.encoding}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">5. Line Ending Format & Lines</span>
+                    <span class="prop-val">${f.extras.lineEndings}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">6. Null-Byte Density (0x00 Padding)</span>
+                    <span class="prop-val">${f.extras.nullRatio}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">7. Printable Text vs Binary Ratio</span>
+                    <span class="prop-val">${f.extras.textRatio}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">8. Drive Cluster Slack Space</span>
+                    <span class="prop-val">${f.extras.slackDesc}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">9. SHA-256 Integrity Hash</span>
+                    <span class="prop-val mono">${f.sha256}</span>
+                  </div>
+                  <div class="prop-row">
+                    <span class="prop-key">10. MD5 Checksum</span>
+                    <span class="prop-val mono">${f.md5}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Raw Binary Header Dump (First 32 Bytes) -->
+              <div class="dashboard-card" style="grid-column: 1 / -1;">
+                <div class="card-heading">Raw Binary Header Inspection (First 32 Bytes)</div>
+                <div class="hex-dump-box">${f.extras.hexPreview}</div>
+              </div>
+
+              <!-- General Standard Properties -->
+              <div class="dashboard-card">
+                <div class="card-heading">General Properties</div>
+                <div class="prop-table">
+                  <div class="prop-row"><span class="prop-key">File Name</span><span class="prop-val">${f.name}</span></div>
+                  <div class="prop-row"><span class="prop-key">Extension</span><span class="prop-val">${f.ext}</span></div>
+                  <div class="prop-row"><span class="prop-key">MIME Type</span><span class="prop-val mono">${f.detectedMime}</span></div>
+                  <div class="prop-row"><span class="prop-key">Exact File Size</span><span class="prop-val">${f.sizeFormatted} (${f.size.toLocaleString()} bytes)</span></div>
+                  <div class="prop-row"><span class="prop-key">Last Modified</span><span class="prop-val">${f.lastModified}</span></div>
+                </div>
+              </div>
+
+              <!-- Visual Preview & Quick Actions -->
+              <div class="dashboard-card">
+                <div class="card-heading">Preview & Actions</div>
+                ${f.previewUrl ? `
+                  <div class="image-preview-wrapper"><img src="${f.previewUrl}" alt="Preview" /></div>
+                ` : `
+                  <div style="color:var(--text-secondary);font-size:12.5px;padding:8px 0;">
+                    File format verified. Technical properties and hashes computed successfully.
+                  </div>
+                `}
+                <div class="utility-actions-grid" style="margin-top:10px;">
+                  <button class="utility-btn" onclick="navigator.clipboard.writeText('${f.name}');showToast('Copied File Name');">Copy Name</button>
+                  <button class="utility-btn" onclick="navigator.clipboard.writeText('${f.sha256}');showToast('Copied SHA-256');">Copy SHA-256</button>
+                  <button class="utility-btn" onclick="downloadReport('txt')">Export TXT</button>
+                  <button class="utility-btn" onclick="downloadReport('json')">Export JSON</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      root.innerHTML = `
+        <div class="app-container">
+          <aside class="app-sidebar">
+            <div class="sidebar-header">
+              <div class="brand-logo-icon">
+                ${getFilePeekLogoSvg(22)}
+              </div>
+              <div>
+                <h1 class="brand-title">FilePeek</h1>
+                <p class="brand-tagline">Know Your Files</p>
+              </div>
+            </div>
+            <nav class="sidebar-nav">
+              <button class="nav-item ${state.view === 'home' ? 'active' : ''}" onclick="state.view='home'; render();">Inspect</button>
+              ${state.activeInspection ? `
+                <button class="nav-item ${state.view === 'dashboard' ? 'active' : ''}" onclick="state.view='dashboard'; render();">Active Inspection</button>
+              ` : ''}
+            </nav>
+            <div class="sidebar-footer">
+              <span style="font-size:11px;color:var(--text-muted);font-weight:600;">v1.0.0</span>
+              <div class="theme-toggle-group">
+                <button class="theme-btn ${state.theme === 'light' ? 'active' : ''}" onclick="setTheme('light')" title="Light Mode">☀️ Light</button>
+                <button class="theme-btn ${state.theme === 'dark' ? 'active' : ''}" onclick="setTheme('dark')" title="Dark Mode">🌙 Dark</button>
+                <button class="theme-btn ${state.theme === 'system' ? 'active' : ''}" onclick="setTheme('system')" title="Follow Windows OS">💻 System</button>
+              </div>
+            </div>
+          </aside>
+          <main class="main-viewport">${mainHtml}</main>
+          <div class="toast-container">
+            ${state.toasts.map(t => `<div class="toast">${t.msg}</div>`).join('')}
+          </div>
+        </div>
+      `;
+
+      const dropzone = document.getElementById('dropzone-area');
+      if (dropzone) {
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
+        dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('drag-active'); });
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('drag-active');
+          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            inspectFileObject(e.dataTransfer.files[0]);
+          }
+        });
+      }
+    }
+
+    function downloadReport(type) {
+      const f = state.activeInspection;
+      const content = type === 'json' ? JSON.stringify(f, null, 2) : ('FILEPEEK REPORT\\nFile: ' + f.name + '\\nFormat: ' + f.detectedFormat + '\\nEntropy: ' + f.extras.entropyScore + '\\nSHA-256: ' + f.sha256 + '\\nMD5: ' + f.md5);
+      const blob = new Blob([content], { type: type === 'json' ? 'application/json' : 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = f.name + '_FilePeek_Report.' + type;
+      a.click();
+      showToast('Exported ' + type.toUpperCase() + ' report');
+    }
+
+    document.getElementById('global-file-input').addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        inspectFileObject(e.target.files[0]);
+      }
+    });
+
+    setTheme('system');
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{
+  "name": "filepeek",
+  "version": "1.0.0",
+  "description": "Premium Windows File Information & Inspector Utility. Know Everything About Your Files.",
+  "main": "dist/main/index.js",
+  "author": {
+    "name": "FilePeek Desktop Engineering Team"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.node.json",
+    "build": "npm run build:main && npm run build:renderer",
+    "test": "node tests/run-all-tests.js",
+    "package:win": "electron-builder --win",
+    "package:win-portable": "electron-builder --win portable",
+    "dist": "npm run build && electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.filepeek.app",
+    "productName": "FilePeek",
+    "copyright": "Copyright © 2026 FilePeek",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "resources/icon.ico",
+      "legalTrademarks": "FilePeek"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FilePeek"
+    },
+    "portable": {
+      "artifactName": "FilePeek-Portable-${version}.exe"
+    }
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}

@@ -1,189 +1,153 @@
-# FilePeek
+# FilePeek 🔍
 
-<div align="center">
+> **Know Everything About Your Files.**  
+> A privacy-focused, offline file inspector and technical metadata utility available as both a native Windows desktop application and a standalone web application.
 
-**Know Everything About Your Files.**
-
-*A lightweight, privacy-focused, premium Windows file inspection utility.*
-
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?logo=windows&logoColor=white)](#)
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline%20%26%20Local-28C76F?logo=shield&logoColor=white)](#)
-[![License](https://img.shields.io/badge/License-MIT-8B7CFF.svg)](#license)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-blue?logo=typescript&logoColor=white)](#)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](#)
-[![Electron](https://img.shields.io/badge/Electron-45-47848F?logo=electron&logoColor=white)](#)
-
-</div>
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Release](https://img.shields.io/badge/Release-v1.0-8B7CFF.svg)](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20x64%20%7C%20Web%20SPA-informational.svg)](#)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline-success.svg)](#)
 
 ---
 
-## 🔍 Overview
+## 📥 Downloads (Choose Your Edition)
 
-**FilePeek** is a fast, offline Windows desktop utility engineered for software architects, developers, security researchers, and everyday power users. Drag and drop any file into FilePeek to instantly reveal its true technical identity, internal metadata, cryptographic digests, and signature verification.
+FilePeek is available in two editions: a native **Windows Desktop Application (`.exe`)** and a **Standalone Offline Web Application (`.html` / `.zip`)**.
 
-FilePeek treats files with zero trust: it inspects binary magic bytes to determine the actual format rather than blindly relying on the file extension. If an executable is disguised as an image or a script is saved with a deceptive suffix, FilePeek immediately flags the discrepancy.
+| Edition | File | Type | Description |
+|---|---|---|---|
+| 🪟 **Desktop (Portable)** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~110 MB) | **Recommended.** Standalone portable binary. No setup required—double click to run instantly. |
+| 📦 **Desktop (Installer)** | [**`FilePeek-Setup-1.0.0.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Setup-1.0.0.exe) | `.exe` (~121 MB) | Standard Windows setup wizard with Desktop and Start Menu shortcuts. |
+| 🌐 **Web App (Zip)** | [**`FilePeek-Web-v1.0.zip`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web-v1.0.zip) | `.zip` (~14 KB) | Portable web package. Unzip and run `run.bat` or open `index.html` in any browser. |
+| 📄 **Web App (Single File)** | [**`FilePeek-Web.html`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web.html) | `.html` (~37 KB) | Single-file, self-contained HTML file. Save to disk and double-click to launch offline. |
 
----
-
-## ✨ Key Features
-
-### 🛡️ 1. Format Detection & Extension Mismatch Alerts
-* **Binary Magic Signature Inspection:** Reads initial header bytes to identify the true container format.
-* **Format Mismatch Engine:** Instantly alerts you when a file's extension disagrees with its underlying signature (e.g. an executable `.exe` renamed to `.png`).
-* **Non-Judgmental Verification:** Highlights discrepancies objectively without making false claims about safety or malware status.
-* **Unrecognized Format Graceful Fallback:** Provides clear indicators when signatures are proprietary or non-standard.
-
-### 🔬 2. Deep Category-Specific Metadata Extraction
-* **🖼️ Images (`JPEG`, `PNG`, `WebP`, `GIF`, `BMP`, `TIFF`, `AVIF`, `SVG`):**
-  * Exact dimensions (width × height) and calculated aspect ratio (`16:9`, `4:3`, `1:1`, etc.)
-  * Color space and bit depth
-  * EXIF camera optics: Camera make & model, lens, focal length, aperture ($f$-number), exposure time, ISO speed, capture timestamp
-  * Safe embedded thumbnail preview with strict memory ceilings (avoids loading massive files into RAM)
-* **🎬 Videos (`MP4`, `MKV`, `MOV`, `AVI`, `WebM`):**
-  * Container format, total duration, frame rate, and bitrate
-  * Video stream dimensions and video codec identification
-  * Audio stream codecs, channel count, and sample rate
-* **🎵 Audio (`MP3`, `WAV`, `FLAC`, `AAC`, `OGG`, `M4A`, `Opus`):**
-  * Duration, bitrate, sample rate, and audio channel layout (Mono, Stereo, 5.1)
-  * ID3v1, ID3v2, Vorbis tags: Track title, artist, album, genre, year, track number
-  * Embedded cover artwork preview extracted directly from metadata frames
-* **📄 PDF Documents (`.pdf`):**
-  * Page count and PDF specification version (e.g., `PDF 1.7`)
-  * Document title, author, subject, creator software, producer library
-  * Creation date, modification date, and encryption/password-protection flag
-* **📦 Archives (`ZIP`):**
-  * Central directory inspection without extracting contents to disk
-  * Total files count, folder count, uncompressed size, compressed size, and compression ratio %
-  * Interactive file structure table with instant search and filtering
-  * Encrypted entry detection
-* **🔢 Raw Binary Header (Hex Inspector):**
-  * 16-byte aligned hexadecimal and decoded ASCII inspector for any file, ideal for reverse engineering and inspecting unfamiliar file formats.
-
-### 🔐 3. Memory-Streaming Cryptographic Hashing
-* **Supported Algorithms:**
-  * **SHA-256:** Recommended modern standard
-  * **SHA-1:** Clearly labeled legacy algorithm (collision-prone)
-  * **MD5:** Clearly labeled legacy checksum algorithm
-* **Chunked File Streaming:** Hashes multi-gigabyte files smoothly with minimal memory footprint.
-* **Real-time Progress & Cancellation:** Interactive progress bar with immediate cancellation support.
-* **1-Click Copy:** Fast clipboard copying for individual digests or complete summaries.
-
-### 🛠️ 4. File Utilities & Report Exporting
-* **Export Reports:** Save full technical inspection reports in human-readable Plaintext (`.txt`) or structured JSON (`.json`).
-* **Copy Summary:** Copy markdown-formatted summary with one click.
-* **Reveal in Explorer:** Opens the file's directory and highlights it directly in Windows File Explorer.
-* **Open in Default App:** Launches the file using Windows' registered default application upon explicit user action (never automatically).
-
-### 🎨 5. Premium Minimalist UI/UX
-* **Subtle Glassmorphism & Modern Desktop Aesthetics:** Inspired by Linear, macOS utilities, and modern Windows 11 Fluent surfaces.
-* **Dark, Light & System Themes:** Complete color-token system with smooth theme transitions.
-* **Offline History Management:** Remembers recently inspected files locally with disk existence checks (gracefully marks deleted or moved files).
+> 🔒 **All releases are available on GitHub Releases:** [**View Release v1.0**](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
 
 ---
 
-## 🔒 Security & Privacy by Design
+### 🛡️ Release Verification (SHA-256 Checksums)
 
-FilePeek is built for zero data leakage:
+Verify the integrity of downloaded binaries using PowerShell (`Get-FileHash <filename> -Algorithm SHA256`):
 
-* **100% Offline:** No network sockets, cloud backends, tracking, or telemetry.
-* **Electron Context Isolation:** `contextIsolation: true`, `nodeIntegration: false`, and `sandbox: true`.
-* **Safe Preload:** Exposes only typed, strictly validated IPC methods via `window.filePeekApi`.
-* **Zero Execution:** Files being inspected are never executed, and file contents are never loaded as application code.
-* **Local Persistence:** Settings and recent history are saved strictly to the local Windows user profile (`%APPDATA%\FilePeek`).
+| File | SHA-256 Hash |
+|---|---|
+| `FilePeek.exe` | `963b21c010a65d385cdbd09d3ac618104d083bb7641b9f1bf35fcf7c7e5262f3` |
+| `FilePeek-Setup-1.0.0.exe` | `1a5532d80766d94c60ea91695b36435c525dfb4cce7ce65e2f0a57a1ae5a2d5f` |
+| `FilePeek-Web-v1.0.zip` | `ee44c03d5c7c915997b3da6ce2eab8a0f210705d4a2c79129a89b9376219eae5` |
+| `FilePeek-Web.html` | `91a1583a39cadb2c8989687a0c8c121730f516ec358642024ba572158d086e84` |
 
 ---
 
-## 🏗️ Architecture
+## ✨ Features & Capabilities
+
+Most operating systems identify files solely by their three-letter extension (`.pdf`, `.jpg`, `.mp4`). Malicious files can disguise executable payloads (`.exe`) with fake extensions. **FilePeek never trusts extensions alone.** It reads raw magic bytes and binary signatures to verify format authenticity.
+
+### 🔬 10 Hidden Properties (Not Shown in Windows File Explorer)
+
+1. **True Magic-Byte Signature (Hex):** Reads raw binary file headers (e.g. `89 50 4E 47` for PNG, `FF D8 FF` for JPEG, `4D 5A` for PE Executable).
+2. **Extension Match Verification:** Detects disguise attempts immediately (e.g., alert if an `.exe` is masquerading as `.pdf`).
+3. **Shannon Entropy (Randomness Score):** Measures byte distribution on an information scale (0.00 – 8.00 bits) to classify files as Plaintext/Code, Structured, or Compressed/Encrypted.
+4. **Character Encoding & Byte Order Mark (BOM):** Identifies UTF-8 with BOM, UTF-16 LE/BE, and ASCII structures.
+5. **Line Ending Convention & Line Counts:** Distinguishes Windows CRLF (`\r\n`) vs Unix LF (`\n`) and counts file lines.
+6. **Null-Byte Density:** Calculates `0x00` padding density to reveal sparse structures or embedded binaries.
+7. **Printable Text vs Binary Ratio:** Exact percentage split between ASCII printable characters and binary bytes.
+8. **Drive Cluster Slack Space:** Computes the unused bytes allocated on standard 4096-byte NTFS filesystem clusters.
+9. **SHA-256 Cryptographic Checksum:** Modern cryptographic verification hash with one-click copy.
+10. **MD5 Checksum:** Classic cryptographic fingerprint for legacy verification.
+
+### 💻 Raw Binary Hex Header Inspection
+Inspect the first 32 bytes of any file in a monospace hex view showing memory offsets, hex pairs, and ASCII representation.
+
+### 🎨 Clean Desktop Interface
+* **Fluent Design Aesthetic:** Subtle glassmorphism, rounded cards, clean typography (Segoe UI Variable & Cascadia Code).
+* **Theme Modes:** Light (`#FFFFFF`), Dark (`#0B0D12`), and automatic Windows System Theme sync.
+* **Instant Window Launch:** Zero startup delay with immediate visual feedback.
+* **Global Drag and Drop:** Drag any file anywhere into FilePeek to inspect it instantly.
+
+### 🔒 Privacy & Offline Guarantee
+* **100% Offline:** Runs entirely on your local machine with zero network requests.
+* **Zero Cloud Uploads:** Your files never leave your device.
+* **No Telemetry / No Tracking:** Zero analytics, metrics, or background pings.
+* **Read-Only Inspection:** Never executes, runs, or alters inspected files.
+
+---
+
+## 📁 Repository Structure
 
 ```
-FilePeek/
-├── src/
-│   ├── shared/
-│   │   ├── types.ts          # Shared TypeScript interfaces & types
-│   │   ├── formatters.ts     # Size, date, duration, and aspect ratio utilities
-│   │   └── constants.ts      # Magic signatures database & category definitions
-│   ├── main/
-│   │   ├── main.ts           # Electron main process & window management
-│   │   ├── ipc.ts            # Secure IPC channel dispatchers
-│   │   ├── detector.ts       # Binary magic bytes & extension mismatch engine
-│   │   ├── hasher.ts         # Memory-streaming cryptographic hash engine
-│   │   ├── store.ts          # Offline user data & history store
-│   │   ├── exporter.ts       # Plaintext and JSON report generators
-│   │   └── extractors/       # Category extractors (image, video, audio, pdf, archive, fallback)
-│   ├── preload/
-│   │   └── index.ts          # ContextBridge bridge exposing window.filePeekApi
-│   └── renderer/
-│       ├── App.tsx           # Main application state & theme orchestrator
-│       ├── styles/           # CSS design system (themes.css, globals.css)
-│       └── components/       # UI cards, dropzone, inspectors, modals
-├── tests/                    # Vitest unit & integration test suites
-└── scripts/                  # Build & development scripts
+filepeek/
+├── app/                      # Electron Desktop Application
+│   ├── main.js               # Main process, window lifecycle & single-instance lock
+│   ├── index.html            # Renderer interface with embedded styles and logic
+│   ├── icon.ico              # Multi-resolution Windows executable icon
+│   └── icon.png              # High-resolution branding icon
+├── web-app/                  # Standalone Web Application Edition
+│   ├── index.html            # Single-file browser version (zero dependencies)
+│   ├── filepeek-preview.html # Web preview source
+│   ├── run.bat               # One-click browser launcher
+│   └── src/                  # Web components, extractors & styles
+├── resources/                # Branding assets & icons
+│   ├── icon.ico              # Windows icon
+│   └── filepeek-logo.png     # 1024x1024 vector-rendered logo
+├── scripts/                  # Build and deployment utilities
+│   └── setup-app.js          # Synchronizer script
+├── package.json              # Project configuration and build targets
+├── LICENSE                   # Apache License 2.0
+└── README.md                 # Project documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Building From Source
 
 ### Prerequisites
-* Windows 10 or Windows 11
-* Node.js v18+ (tested on Node v22 / v24)
-* npm v9+
+* [Node.js](https://nodejs.org/) v18.0.0 or higher
+* npm
 
-### Installation
+### Setup
 ```bash
-git clone https://github.com/your-username/FilePeek.git
-cd FilePeek
+# Clone the repository
+git clone https://github.com/patilomkar7570/filepeek.git
+cd filepeek
+
+# Install dependencies
 npm install
 ```
 
-### Running in Development
+### Running Locally
 ```bash
-npm run dev
+# Run the Electron desktop app
+npm start
+
+# Or launch the web app directly in your browser
+start web-app/index.html
 ```
 
-### Running the Test Suite
+### Building Windows Executables
 ```bash
-npm test
-```
-The test suite covers:
-* Magic byte detection & format matching
-* Extension mismatch warnings
-* Byte formatting & aspect ratio calculations
-* Streaming cryptographic hashing & job cancellation
-* ZIP central directory structure inspection
-* PDF page count & metadata parsing
-* Local settings & recent history persistence
-* Report generation (TXT & JSON)
+# Build standalone portable executable (.exe)
+npm run package:portable
 
-### Building the Production Desktop Application
-```bash
-# Build desktop executable and NSIS installer
+# Build NSIS setup installer (.exe)
 npm run package
 
-# Build standalone portable Windows executable
-npm run package:portable
+# Build both editions at once
+npm run dist
 ```
-The resulting installers and binaries will be generated in the `release/` directory:
-* `FilePeek-1.0.0-nsis-x64.exe` (Windows Installer with desktop shortcuts)
-* `FilePeek-1.0.0-portable-x64.exe` (Standalone portable single-file binary)
-
----
-
-## 📊 Supported Formats
-
-| Category | Typical Formats | Inspected Properties |
-|---|---|---|
-| **Images** | JPEG, PNG, WebP, GIF, BMP, TIFF, AVIF, SVG | Dimensions, aspect ratio, bit depth, color space, EXIF camera optics, safe preview |
-| **Videos** | MP4, MKV, MOV, AVI, WebM | Duration, resolution, video codec, frame rate, audio codec, container format, bitrate |
-| **Audio** | MP3, WAV, FLAC, AAC, OGG, M4A, Opus | Duration, bitrate, sample rate, channels, artist, album, title, embedded cover art |
-| **Documents** | PDF | Page count, PDF version, title, author, subject, creator software, dates, encryption |
-| **Archives** | ZIP | Contained files, directories, compressed/uncompressed sizes, ratio %, entry browser |
-| **Executables** | EXE, DLL, SYS, ELF, Mach-O | PE/MZ header signatures, architecture classification, format verification |
-| **Code & Data** | JSON, XML, HTML, CSS, JS, TS, CSV, TXT | Line count estimation, encoding, format identification |
-| **Any Binary** | Any file format | Magic bytes, header hex/ASCII inspector, cryptographic hashes (SHA-256, SHA-1, MD5) |
+Compiled binaries are output to the `release/` directory.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+FilePeek is open-source software licensed under the **[Apache License 2.0](LICENSE)**.
+
+```
+Copyright 2026 Omkar Patil (patilomkar7570)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+```
