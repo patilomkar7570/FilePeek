@@ -1,0 +1,72 @@
+:root {
+  --font-sans: 'Segoe UI Variable Text', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Inter', Roboto, sans-serif;
+  --font-mono: 'Cascadia Code', 'Consolas', 'Segoe UI Mono', monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Theme (Default) */
+[data-theme='dark'] {
+  --bg-app: #0B0D12;
+  --bg-sidebar: #10131B;
+  --bg-card: #171B25;
+  --bg-card-hover: #1E2330;
+  --bg-card-active: #232938;
+  --bg-input: #12151D;
+  --border-color: #252B38;
+  --border-light: #323A4C;
+  --border-focus: #8B7CFF;
+  --text-primary: #F5F7FA;
+  --text-secondary: #929AAA;
+  --text-muted: #676E7D;
+  --accent: #8B7CFF;
+  --accent-hover: #9D90FF;
+  --accent-glow: rgba(139, 124, 255, 0.18);
+  --accent-subtle: rgba(139, 124, 255, 0.1);
+  --success: #28C76F;
+  --success-subtle: rgba(40, 199, 111, 0.12);
+  --warning: #FFA143;
+  --warning-subtle: rgba(255, 161, 67, 0.12);
+  --danger: #FF5C5C;
+  --danger-subtle: rgba(255, 92, 92, 0.12);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --titlebar-bg: #0B0D12;
+  --titlebar-btn-hover: #1E2330;
+}
+
+/* Light Theme */
+[data-theme='light'] {
+  --bg-app: #F5F6FA;
+  --bg-sidebar: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0F2F8;
+  --bg-card-active: #E8EBF3;
+  --bg-input: #FAFBFC;
+  --border-color: #E7E9F0;
+  --border-light: #DCE0EB;
+  --border-focus: #6757E8;
+  --text-primary: #171923;
+  --text-secondary: #747B8A;
+  --text-muted: #9BA1B0;
+  --accent: #6757E8;
+  --accent-hover: #5544E0;
+  --accent-glow: rgba(103, 87, 232, 0.18);
+  --accent-subtle: rgba(103, 87, 232, 0.08);
+  --success: #1EAE5E;
+  --success-subtle: rgba(30, 174, 94, 0.1);
+  --warning: #E68A00;
+  --warning-subtle: rgba(230, 138, 0, 0.1);
+  --danger: #E53E3E;
+  --danger-subtle: rgba(229, 62, 62, 0.1);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.09);
+  --titlebar-bg: #F5F6FA;
+  --titlebar-btn-hover: #E8EBF3;
+}

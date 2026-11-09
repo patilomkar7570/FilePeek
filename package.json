@@ -1,0 +1,77 @@
+{
+  "name": "filepeek",
+  "version": "1.0.0",
+  "description": "Premium Windows File Information & Inspector Application",
+  "main": "dist/main/main.js",
+  "author": "Google DeepMind Advanced Agentic Coding",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build:main": "node scripts/build.mjs",
+    "build:renderer": "vite build",
+    "build": "node scripts/build.mjs && vite build",
+    "test": "vitest run --config vitest.config.ts",
+    "package": "npm run build && electron-builder --win",
+    "package:dir": "npm run build && electron-builder --dir",
+    "package:portable": "npm run build && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.filepeek.app",
+    "productName": "FilePeek",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FilePeek"
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}"
+    }
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "exifr": "^7.1.3",
+    "image-size": "^2.1.0",
+    "lucide-react": "^1.70.0",
+    "music-metadata": "^12.3.5",
+    "pdf-lib": "^1.17.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2",
+    "file-type": "^22.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
+  }
+}
