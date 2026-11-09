@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Know Everything About Your Files.</strong><br>
-  A privacy-focused, offline-first file inspection and technical metadata utility available as both a native Windows desktop application and a standalone web application.
+  A privacy-focused, offline-first file inspection and technical metadata utility available as both an installable Windows desktop application and a standalone web application.
 </p>
 
 <p align="center">
@@ -20,11 +20,12 @@
 
 ## 📥 Downloads
 
-Choose between the native **Windows Desktop Application** or the **Standalone Web Application**:
+Choose how you want to run FilePeek:
 
 | Edition | File | Type | Description |
 |---|---|---|---|
-| 🪟 **Desktop Application** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~105 MB) | Standalone portable Windows executable. No installation required—double-click to run immediately. |
+| 📦 **Desktop Installer** *(Recommended)* | [**`FilePeek-Installer.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Installer.exe) | `.exe` (~116 MB) | Standard Windows setup installer. Installs FilePeek, creates a **Desktop shortcut** & Start Menu entry, and includes a full **Windows uninstaller**. |
+| 🪟 **Desktop Portable** | [**`FilePeek.exe`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek.exe) | `.exe` (~105 MB) | Standalone portable executable. Zero installation—double-click to run immediately anywhere. |
 | 🌐 **Web Application** | [**`FilePeek-Web.zip`**](https://github.com/patilomkar7570/filepeek/releases/download/v1.0/FilePeek-Web.zip) | `.zip` (~14 KB) | Standalone offline web application. Unzip and run `run.bat` or open `index.html` in any browser. |
 
 > 🔒 **Direct Release Page:** [**View Release v1.0 on GitHub**](https://github.com/patilomkar7570/filepeek/releases/tag/v1.0)
@@ -116,11 +117,11 @@ start web-app/index.html
 
 ### Building Windows Executables
 ```bash
+# Build Windows setup installer (.exe)
+npm run package
+
 # Build standalone portable executable (.exe)
 npm run package:portable
-
-# Build NSIS setup installer (.exe)
-npm run package
 ```
 Compiled binaries are output to the `release/` directory.
 
